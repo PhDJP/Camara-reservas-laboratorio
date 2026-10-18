@@ -37,8 +37,12 @@
   </main>
   <script>
     'use strict';
-    // Reemplaza este origen por el origen exacto que muestra location.origin en la app desplegada.
-    const ALLOWED_PARENT_ORIGINS = ['https://n-5hzebqksnzvpgj27zydudyde6gl2sdx5c3lu45a-0lu-script.googleusercontent.com'];
+    // Apps Script puede variar el segmento de sesión del origen.
+    // El patrón acepta solo el prefijo de esta aplicación.
+   const ALLOWED_PARENT_ORIGIN_PATTERN = /^https:\/\/n-5hzebqksnzvpgj27zydudyde6gl2sdx5c3lu45a-[a-z0-9]+-script\.googleusercontent\.com$/;
+    function isAllowedParentOrigin(origin) {
+      return typeof origin === 'string' && ALLOWED_PARENT_ORIGIN_PATTERN.test(origin);
+    }
     const params = new URLSearchParams(location.search);
     const requestId = params.get('requestId') || '';
     const targetOrigin = params.get('targetOrigin') || '';
@@ -57,7 +61,7 @@
     }
     function reportError(message) {
       status.textContent = message; status.className = 'error';
-      if (window.opener && requestId && ALLOWED_PARENT_ORIGINS.includes(targetOrigin)) {
+      if (window.opener && requestId && isAllowedParentOrigin(targetOrigin)) {
         window.opener.postMessage({ type: 'camera-error', requestId, message }, targetOrigin);
       }
     }
@@ -89,7 +93,7 @@
 }
     async function openCamera() {
       if (!requestId || !window.opener || window.opener.closed) { reportError('Abre esta página desde la aplicación para continuar.'); return; }
-      if (!ALLOWED_PARENT_ORIGINS.includes(targetOrigin) || !/^https:\/\//i.test(targetOrigin)) { reportError('El origen de la aplicación no está autorizado en la configuración de esta página.'); return; }
+      if (!isAllowedParentOrigin(targetOrigin) || !/^https:\/\//i.test(targetOrigin)) { reportError('No se pudo validar la conexión. Cierra esta ventana y vuelve a abrir la cámara desde la aplicación.'); return; }
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { reportError('Este navegador no permite usar la cámara.'); return; }
       start.disabled = true;
       try {
@@ -123,8 +127,8 @@
       send.disabled = true; setTimeout(() => window.close(), 400);
     };
     window.addEventListener('pagehide', stopCamera);
-    if (!requestId || !window.opener || !ALLOWED_PARENT_ORIGINS.includes(targetOrigin)) {
-      start.disabled = true; reportError('Esta página debe abrirse desde la aplicación y tener configurado su origen permitido.');
+    if (!requestId || !window.opener || !isAllowedParentOrigin(targetOrigin)) {
+      start.disabled = true; reportError('No se pudo validar la conexión. Cierra esta ventana y vuelve a abrir la cámara desde la aplicación.');
     }
   </script>
 </body>
