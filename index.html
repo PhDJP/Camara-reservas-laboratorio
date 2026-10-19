@@ -37,11 +37,13 @@
   </main>
   <script>
     'use strict';
-    // Apps Script puede variar el segmento de sesión del origen.
-    // El patrón acepta solo el prefijo de esta aplicación.
-   const ALLOWED_PARENT_ORIGIN_PATTERN = /^https:\/\/n-5hzebqksnzvpgj27zydudyde6gl2sdx5c3lu45a-[a-z0-9]+-script\.googleusercontent\.com$/;
+    // Los patrones aceptan solo los prefijos autorizados de estas aplicaciones.
+   const ALLOWED_PARENT_ORIGIN_PATTERNS = [
+     /^https:\/\/n-5hzebqksnzvpgj27zydudyde6gl2sdx5c3lu45a-[a-z0-9]+-script\.googleusercontent\.com$/,
+     /^https:\/\/n-5vb6cevsq2zlqnjfx3irifu7jf3t6daqiewta5a-[a-z0-9]+-script\.googleusercontent\.com$/
+   ];
     function isAllowedParentOrigin(origin) {
-      return typeof origin === 'string' && ALLOWED_PARENT_ORIGIN_PATTERN.test(origin);
+      return typeof origin === 'string' && ALLOWED_PARENT_ORIGIN_PATTERNS.some(pattern => pattern.test(origin));
     }
     const params = new URLSearchParams(location.search);
     const requestId = params.get('requestId') || '';
