@@ -40,7 +40,8 @@
     // Los patrones aceptan solo los prefijos autorizados de estas aplicaciones.
    const ALLOWED_PARENT_ORIGIN_PATTERNS = [
      /^https:\/\/n-5hzebqksnzvpgj27zydudyde6gl2sdx5c3lu45a-[a-z0-9]+-script\.googleusercontent\.com$/,
-     /^https:\/\/n-5vb6cevsq2zlqnjfx3irifu7jf3t6daqiewta5a-[a-z0-9]+-script\.googleusercontent\.com$/
+     /^https:\/\/n-5vb6cevsq2zlqnjfx3irifu7jf3t6daqiewta5a-[a-z0-9]+-script\.googleusercontent\.com$/,
+     /^https:\/\/n-6skr2tfch6r45mp5gbqihbi4xnujpklekj42jea-[a-z0-9]+-script\.googleusercontent\.com$/
    ];
     function isAllowedParentOrigin(origin) {
       return typeof origin === 'string' && ALLOWED_PARENT_ORIGIN_PATTERNS.some(pattern => pattern.test(origin));
